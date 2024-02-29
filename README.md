@@ -3,6 +3,33 @@
 - Docker
 - Mac with Apple silicon
 
+### Steps to reproduce `exit status 139`
+> Use official FrankenPHP base image
+
+- Clone this repository
+- cd to cloned repository
+- Build the image:
+```
+docker build -t frankentest:3 -f FrankenPHP_3.Dockerfile .
+```
+- Run the container
+```
+docker run -p 9003:9003 --rm frankentest:3
+```
+- You will see:
+```
+2024-02-29 14:40:25,451 INFO Set uid to user 1000 succeeded
+2024-02-29 14:40:25,452 INFO supervisord started with pid 1
+2024-02-29 14:40:26,463 INFO spawned: 'octane_00' with pid 20
+
+   INFO  Server running…
+
+  Local: http://0.0.0.0:9003
+
+  Press Ctrl+C to stop the server
+
+2024-02-29 14:40:27,226 WARN exited: octane_00 (exit status 139; not expected)
+```
 
 ### Steps to reproduce `exit status 139`
 > Use `php:${PHP_VERSION}-zts-bookworm`
