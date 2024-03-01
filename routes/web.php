@@ -19,11 +19,14 @@ Route::get('/', function () {
 
 Route::post('/upload', function () {
     request()->validate([
-        'file' => [
+        'filemy' => [
             'required',
         ],
     ]);
-    $thumb_file = request()->file(key: 'file');
-
+    $thumb_file = request()->file(key: 'filemy');
+    $thumb_file->getRealPath();
+    $thumb_file->getClientOriginalName();
+    $thumb_file->getClientMimeType();
+    $thumb_file->getSize();
     return 'Done';
 })->name('upload');
