@@ -11,8 +11,6 @@ ARG COMPOSER_VERSION=latest
 
 ###########################################
 
-FROM composer:${COMPOSER_VERSION} AS vendor
-
 FROM dunglas/frankenphp:${FRANKENPHP_VERSION}
 
 LABEL maintainer="SMortexa <seyed.me720@gmail.com>"
@@ -75,6 +73,7 @@ RUN apt-get update; \
     memcached \
     igbinary \
     ldap \
+    @composer \
     && apt-get -y autoremove \
     && apt-get clean \
     && docker-php-source delete \
@@ -98,7 +97,6 @@ RUN cp ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini
 
 USER ${USER}
 
-COPY --chown=${USER}:${USER} --from=vendor /usr/bin/composer /usr/bin/composer
 COPY --chown=${USER}:${USER} composer.json composer.lock ./
 
 RUN composer install \

@@ -3,17 +3,13 @@ ARG PHP_VERSION=8.3
 
 ARG FRANKENPHP_VERSION=1.1-php${PHP_VERSION}
 
-ARG COMPOSER_VERSION=latest
-
 ###########################################
 # Build frontend assets with NPM
 ###########################################
 
 ###########################################
 
-FROM composer:${COMPOSER_VERSION} AS vendor
-
-FROM php:${PHP_VERSION}-zts-bookworm AS base
+FROM dunglas/frankenphp:dev AS base
 
 LABEL maintainer="SMortexa <seyed.me720@gmail.com>"
 LABEL org.opencontainers.image.title="Laravel Octane Dockerfile"
@@ -75,6 +71,7 @@ RUN apt-get update; \
     memcached \
     igbinary \
     ldap \
+    @composer \
     && apt-get -y autoremove \
     && apt-get clean \
     && docker-php-source delete \
@@ -98,7 +95,6 @@ RUN cp ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini
 
 USER ${USER}
 
-COPY --chown=${USER}:${USER} --from=vendor /usr/bin/composer /usr/bin/composer
 COPY --chown=${USER}:${USER} composer.json composer.lock ./
 
 RUN composer install \
@@ -133,9 +129,7 @@ RUN composer install \
     && composer clear-cache \
     && php artisan storage:link
 
-ADD --chown=${USER}:${USER} https://github.com/dunglas/frankenphp/releases/download/v1.1.0/frankenphp-linux-x86_64 ./frankenphp
-
-RUN chmod +x /usr/local/bin/start-container frankenphp
+RUN chmod +x /usr/local/bin/start-container
 
 RUN cat deployment/utilities.sh >> ~/.bashrc
 
